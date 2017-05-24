@@ -31,3 +31,7 @@ TODOs:
   - [ ] Mouse dragging
   - [ ] Touch dragging
 - [ ] Add more shapes (this will take a while)
+
+## Screenshots
+![Screenshot of Menu](https://github.com/SethDamiani/Minesweeper3D/blob/master/images/Menu.png "Menu Screen")
+![Screenshot of Gameplay](https://github.com/SethDamiani/Minesweeper3D/blob/master/images/Gameplay.png "Gameplay")
