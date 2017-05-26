@@ -63,6 +63,12 @@ class Cell {
             else if (event.getButton() == MouseButton.SECONDARY) flag();
             if (Main.getFlaggedBombs()== Main.getTotalBombs()) Main.gameWon();
         });
+        cell.setOnMouseEntered(event -> {
+            if (!this.isClicked && !this.isFlagged) cell.setFill(Color.GRAY.brighter());
+        });
+        cell.setOnMouseExited(event -> {
+            if (!this.isClicked && !this.isFlagged) cell.setFill(Color.GRAY);
+        });
         cube.getChildren().add(cell);
         if (this.y == 0 || this.y == 9 || this.z == 0 || this.z == 9) this.isEdge = true;
 

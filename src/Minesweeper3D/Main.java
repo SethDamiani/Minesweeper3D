@@ -53,6 +53,7 @@ public class Main extends Application {
     private Group menuRoot        = new Group(); // Menu screen root group
     private Group scoresRoot      = new Group(); // Scores screen root group
     private Group quitRoot        = new Group(); // Quit screen root group
+    private Group confirmExitRoot = new Group(); // Confirm exit screen root group
     private Group gX              = new Group(); // X-axis rotate group
     private Group gY              = new Group(); // Y-axis rotate group
     private Group cube            = new Group(); // Cube container
@@ -67,6 +68,7 @@ public class Main extends Application {
     private Scene menu            = new Scene(menuRoot, 800, 700, Color.LIGHTGRAY);   // Menu   scene
     private Scene scores          = new Scene(scoresRoot, 800, 700, Color.LIGHTGRAY); // Scores scene
     private Scene quit            = new Scene(quitRoot, Color.BLACK);                               // Quit   scene
+    private Scene confirmExit     = new Scene(confirmExitRoot, 800, 700, Color.BLACK);
     private int time; // Tracks time spent in a given game
     private static int totalBombs; // How many bombs are in the board
     private static int flaggedCells; // How many cells have been flagged
@@ -94,6 +96,7 @@ public class Main extends Application {
     private TableColumn firstNameCol = new TableColumn("First");
     private TableColumn lastNameCol = new TableColumn("Last");
     private TableColumn timeCol = new TableColumn("Time");
+    private Timeline timeTask;
 
     @Override
     public void start(Stage primaryStage) throws Exception { // Main JavaFX method
@@ -108,7 +111,7 @@ public class Main extends Application {
         stopwatch.setFont(new Font(45));
         bombs.setFont(new Font(45));
         gameRoot.getChildren().addAll(stopwatch, bombs);
-        Timeline timeTask = new Timeline(new KeyFrame(Duration.seconds(1), event -> { // Task to keep track of time
+        timeTask = new Timeline(new KeyFrame(Duration.seconds(1), event -> { // Task to keep track of time
             time++;
             stopwatch.setText("Time: "+String.valueOf(time));
         }));
@@ -134,6 +137,58 @@ public class Main extends Application {
         placeNumbers(); // Place the correct numbers according to the new bomb positions
 
         // -------------------------------------------------------------------------------
+
+        // Confirm Exit screen setup
+        // new Color(1,1,1,.5)
+        Text confirmExitText = new Text("Quit");
+        confirmExitText.setFill(Color.WHITE);
+        confirmExitText.setFont(Font.font(80));
+        confirmExitText.setX(400-confirmExitText.getLayoutBounds().getWidth()/2);
+        confirmExitText.setY(200);
+        Text confirmExitSubText = new Text("Are you sure you would like to quit to the main menu?\nAll progress will be lost.");
+        confirmExitSubText.setFill(Color.WHITE);
+        confirmExitSubText.setFont(Font.font(20));
+        confirmExitSubText.setTextAlignment(TextAlignment.CENTER);
+        confirmExitSubText.setX(400-confirmExitSubText.getLayoutBounds().getWidth()/2);
+        confirmExitSubText.setY(300);
+        Text confirmExitYesText = new Text("Yes");
+        confirmExitYesText.setFont(Font.font(30));
+        confirmExitYesText.setFill(Color.WHITE);
+        confirmExitYesText.setX(300-confirmExitYesText.getLayoutBounds().getWidth()/2);
+        confirmExitYesText.setY(500);
+        Rectangle confirmExitYesButton = new Rectangle(confirmExitYesText.getBoundsInLocal().getMinX()-20, confirmExitYesText.getBoundsInLocal().getMinY()-20, confirmExitYesText.getLayoutBounds().getWidth()+40, confirmExitYesText.getLayoutBounds().getHeight()+40);
+        confirmExitYesButton.setFill(Color.TRANSPARENT);
+        confirmExitYesButton.setStroke(Color.WHITE);
+        confirmExitYesButton.setStrokeWidth(10);
+        confirmExitYesButton.setOnMouseEntered(event -> confirmExitYesButton.setFill(new Color(1,1,1,.5)));
+        confirmExitYesButton.setOnMouseExited(event -> confirmExitYesButton.setFill(Color.TRANSPARENT));
+        confirmExitYesText.setOnMouseEntered(event -> confirmExitYesButton.setFill(new Color(1,1,1,.5)));
+        confirmExitYesText.setOnMouseExited(event -> confirmExitYesButton.setFill(Color.TRANSPARENT));
+        confirmExitYesButton.setOnMouseClicked(event -> primaryStage.setScene(menu));
+        confirmExitYesText.setOnMouseClicked(event -> primaryStage.setScene(menu));
+        Text confirmExitNoText = new Text("No");
+        confirmExitNoText.setFont(Font.font(30));
+        confirmExitNoText.setFill(Color.WHITE);
+        confirmExitNoText.setX(500-confirmExitYesText.getLayoutBounds().getWidth()/2);
+        confirmExitNoText.setY(500);
+        Rectangle confirmExitNoButton = new Rectangle(confirmExitNoText.getBoundsInLocal().getMinX()-20, confirmExitNoText.getBoundsInLocal().getMinY()-20, confirmExitNoText.getLayoutBounds().getWidth()+40, confirmExitNoText.getLayoutBounds().getHeight()+40);
+        confirmExitNoButton.setFill(Color.TRANSPARENT);
+        confirmExitNoButton.setStroke(Color.WHITE);
+        confirmExitNoButton.setStrokeWidth(10);
+        confirmExitNoButton.setOnMouseEntered(event -> confirmExitNoButton.setFill(new Color(1,1,1,.5)));
+        confirmExitNoButton.setOnMouseExited(event -> confirmExitNoButton.setFill(Color.TRANSPARENT));
+        confirmExitNoText.setOnMouseEntered(event -> confirmExitNoButton.setFill(new Color(1,1,1,.5)));
+        confirmExitNoText.setOnMouseExited(event -> confirmExitNoButton.setFill(Color.TRANSPARENT));
+        confirmExitNoButton.setOnMouseClicked(event -> {
+            timeTask.play();
+            primaryStage.setScene(game);
+        });
+        confirmExitNoText.setOnMouseClicked(event -> {
+            timeTask.play();
+            primaryStage.setScene(game);
+        });
+        confirmExitRoot.getChildren().addAll(confirmExitText, confirmExitSubText, confirmExitYesText, confirmExitNoText, confirmExitYesButton, confirmExitNoButton);
+
         // Quit screen UI setup
         Rectangle quitBox = new Rectangle(800, 700, Color.INDIANRED); // Initialize and configure background
         Text quitText = new Text(260, 200, "Game Over"); // Initialize and configure the title
@@ -270,7 +325,10 @@ public class Main extends Application {
                 primaryStage.setScene(game);
                 timeTask.play();
             }
-            else if (event.getCode() == KeyCode.ESCAPE) primaryStage.close();
+            else if (event.getCode() == KeyCode.ESCAPE) {
+                primaryStage.setScene(confirmExit);
+                //primaryStage.close();
+            }
         });
         game.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.SPACE){
@@ -762,7 +820,10 @@ public class Main extends Application {
 
 
         EventHandler<KeyEvent> KeyPressHandler = event -> {
-            if (event.getCode() == KeyCode.ESCAPE) stage.close();
+            if (event.getCode() == KeyCode.ESCAPE) {
+                timeTask.pause();
+                stage.setScene(confirmExit);
+            }
             else if (event.getCode() == KeyCode.D || event.getCode() == KeyCode.RIGHT) rightRotate.play();
             else if (event.getCode() == KeyCode.A || event.getCode() == KeyCode.LEFT)  leftRotate.play();
             else if (event.getCode() == KeyCode.W || event.getCode() == KeyCode.UP)    upRotate.play();
@@ -772,8 +833,7 @@ public class Main extends Application {
 
 
         EventHandler<KeyEvent> KeyReleaseHandler = event -> {
-            if (event.getCode() == KeyCode.ESCAPE) stage.close();
-            else if (event.getCode() == KeyCode.D || event.getCode() == KeyCode.RIGHT) rightRotate.stop();
+            if      (event.getCode() == KeyCode.D || event.getCode() == KeyCode.RIGHT) rightRotate.stop();
             else if (event.getCode() == KeyCode.A || event.getCode() == KeyCode.LEFT)  leftRotate.stop();
             else if (event.getCode() == KeyCode.W || event.getCode() == KeyCode.UP)    upRotate.stop();
             else if (event.getCode() == KeyCode.S || event.getCode() == KeyCode.DOWN)  downRotate.stop();
