@@ -22,7 +22,8 @@ TODOs:
 
 - [x] Add high scores table
 - [ ] Improve the ridiculously inefficient method for determining adjacancy between faces of the cube
-- [ ] Add confirmation to exit
+- [x] Add confirmation to exit
+- [x] Add hover indication on cells
 - [ ] Add quit button within game
 - [ ] Enable first-click bomb protection
 - [ ] Add advanced mode where the cube rotates randomly
